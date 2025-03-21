@@ -53,7 +53,7 @@ impl Display for StreamingUser {
 impl From<StreamingUser> for FollowingUser {
     fn from(value: StreamingUser) -> Self {
         Self {
-            broadcaster_login: value.user_login,
+            broadcaster_login: value.to_string(),
         }
     }
 }
