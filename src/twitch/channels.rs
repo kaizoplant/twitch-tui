@@ -75,7 +75,6 @@ pub struct FollowingChannelList {
 #[derive(Deserialize, Debug, Clone, Default)]
 #[allow(dead_code)]
 pub struct LiveChannelList {
-    pub total: u64,
     pub data: Vec<StreamingUser>,
     pagination: Pagination,
 }
@@ -83,7 +82,7 @@ pub struct LiveChannelList {
 impl From<LiveChannelList> for FollowingChannelList {
     fn from(val: LiveChannelList) -> Self {
         Self {
-            total: val.total,
+            total: val.data.len() as u64,
             data: val.data.into_iter().map(Into::into).collect(),
             pagination: val.pagination,
         }
