@@ -28,7 +28,7 @@ pub struct FollowingWidget {
 
 impl FollowingWidget {
     pub fn new(config: SharedCompleteConfig) -> Self {
-        let item_getter = Following::new(config.borrow().twitch.clone());
+        let item_getter = Following::new(config.borrow().clone());
 
         let search_widget = SearchWidget::new(
             config.clone(),
