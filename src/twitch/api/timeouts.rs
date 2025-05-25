@@ -22,6 +22,11 @@ impl TimeoutQuery {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TimeoutPayload {
+    data: TimeoutPayloadData
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+struct TimeoutPayloadData {
     user_id: String,
     duration: Option<usize>,
     reason: Option<String>,
@@ -30,9 +35,11 @@ pub struct TimeoutPayload {
 impl TimeoutPayload {
     pub const fn new(user_id: String, duration: Option<usize>, reason: Option<String>) -> Self {
         Self {
-            user_id,
-            duration,
-            reason,
+            data: TimeoutPayloadData{
+                user_id,
+                duration,
+                reason,
+            }
         }
     }
 }
