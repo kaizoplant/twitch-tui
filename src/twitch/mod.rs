@@ -19,6 +19,7 @@ use api::{
     event_sub::{INITIAL_EVENT_SUBSCRIPTIONS, unsubscribe_from_events},
     subscriptions::Subscription,
     timeouts::{TimeoutPayload, TimeoutQuery, timeout_twitch_user},
+    raids::{RaidQuery, raid_twitch_user},
 };
 use badges::retrieve_user_badges;
 use color_eyre::{
@@ -235,6 +236,11 @@ async fn handle_command_message(
             let timeout_payload = TimeoutPayload::new(target_user_id, Some(duration), reason);
 
             timeout_twitch_user(twitch_client, timeout_query, timeout_payload).await?;
+        }
+        TwitchCommand::Raid(username) => {
+            let target_user_id = get_channel_id(twitch_client, &username).await?;
+            let raid_query = RaidQuery::new(channel_id.to_string(), target_user_id);
+            raid_twitch_user(twitch_client, raid_query).await?;
         }
     }
 

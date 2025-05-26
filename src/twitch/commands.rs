@@ -11,6 +11,8 @@ pub enum TwitchCommand {
     Ban(String, Option<String>),
     /// Timeout for username, duration in seconds, and optional reason
     Timeout(String, usize, Option<String>),
+    /// Raid a username
+    Raid(String),
 }
 
 impl TwitchCommand {
@@ -46,6 +48,12 @@ impl TwitchCommand {
             _ => bail!("Invalid timeout command arguments"),
         }
     }
+    fn handle_raid_command(args: &[&str]) -> Result<Self, Error>{
+        match args.iter().as_slice() {
+            [username] => Ok(Self::Raid((*username).to_string())),
+            _ => bail!("Invalid raid command arguments"),
+        }
+    }
 }
 
 impl FromStr for TwitchCommand {
@@ -58,6 +66,7 @@ impl FromStr for TwitchCommand {
             ["clear"] => Self::Clear,
             ["ban", args @ ..] => Self::handle_ban_command(args)?,
             ["timeout", args @ ..] => Self::handle_timeout_command(args)?,
+            ["raid", args @..] => Self::handle_raid_command(args)?,
             _ => bail!("Twitch command {} is not supported", s),
         };
 

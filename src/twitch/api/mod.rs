@@ -4,6 +4,7 @@ pub mod clear;
 pub mod event_sub;
 pub mod following;
 pub mod messages;
+pub mod raids;
 pub mod subscriptions;
 pub mod timeouts;
 
