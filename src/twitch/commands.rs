@@ -26,6 +26,9 @@ pub enum TwitchCommand {
     SubscribersOff,
     EmoteOnly,
     EmoteOnlyOff,
+
+    Title(String),
+    Category(String),
 }
 
 impl TwitchCommand {
@@ -96,6 +99,14 @@ impl TwitchCommand {
             _ => bail!("Invalid slow command arguments"),
         }
     }
+    fn handle_title_command(args: &[&str]) -> Self {
+        let title = args.join(" ");
+        Self::Title(title)
+    }
+    fn handle_category_command(args: &[&str]) -> Self {
+        let game_name = args.join(" ");
+        Self::Category(game_name)
+    }
 }
 
 impl FromStr for TwitchCommand {
@@ -119,6 +130,8 @@ impl FromStr for TwitchCommand {
             ["subscribersoff"] => Self::SubscribersOff,
             ["emoteonly"] => Self::EmoteOnly,
             ["emoteonlyoff"] => Self::EmoteOnlyOff,
+            ["title", args @ ..] => Self::handle_title_command(args),
+            ["category", args @ ..] => Self::handle_category_command(args),
             _ => bail!("Twitch command {} is not supported", s),
         };
 

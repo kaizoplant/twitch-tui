@@ -94,6 +94,9 @@ pub static SUPPORTED_COMMANDS: LazyLock<Vec<&str>> = LazyLock::new(|| {
         // "unvip",
         // "vips",
         // "w",
+        // the following below are not normally chat commands so ill put them seperately for now
+        "title",
+        "category",
     ]
 });
 

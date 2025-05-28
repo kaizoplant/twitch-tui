@@ -14,6 +14,9 @@ mod tests;
 use std::{collections::HashMap, str::FromStr};
 
 use api::{
+    channel_information::{
+        UpdateChannelInformationPayload, get_game_id, update_channel_information,
+    },
     chat_settings::{
         UpdateTwitchChatSettingsPayload, UpdateTwitchChatSettingsQuery, get_chat_settings,
         update_chat_settings,
@@ -305,6 +308,20 @@ async fn handle_command_message(
             let update_payload = UpdateTwitchChatSettingsPayload::new_emote_only_mode(false);
 
             update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::Title(title) => {
+            let update_payload = UpdateChannelInformationPayload::new_title(title);
+
+            update_channel_information(twitch_client, channel_id.to_string(), update_payload)
+                .await?;
+        }
+        TwitchCommand::Category(game_name) => {
+            let game_id = get_game_id(twitch_client, &game_name).await?;
+
+            let update_payload = UpdateChannelInformationPayload::new_category(game_id);
+
+            update_channel_information(twitch_client, channel_id.to_string(), update_payload)
+                .await?;
         }
     }
 
