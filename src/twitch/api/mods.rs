@@ -11,10 +11,10 @@ pub struct ModQuery {
 }
 
 impl ModQuery {
-    pub const fn new(user_id: String, broadcaster_id: String) -> Self {
+    pub const fn new(broadcaster_id: String, user_id: String) -> Self {
         Self {
-            user_id,
             broadcaster_id,
+            user_id,
         }
     }
 }
@@ -24,8 +24,8 @@ pub async fn mod_twitch_user(client: &Client, query: ModQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/moderation/moderators");
 
     let mod_query = &[
-        ("user_id", query.user_id),
         ("broadcaster_id", query.broadcaster_id),
+        ("user_id", query.user_id),
     ];
 
     client
@@ -43,8 +43,8 @@ pub async fn unmod_twitch_user(client: &Client, query: ModQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/moderation/moderators");
 
     let unmod_query = &[
-        ("user_id", query.user_id),
         ("broadcaster_id", query.broadcaster_id),
+        ("user_id", query.user_id),
     ];
 
     client

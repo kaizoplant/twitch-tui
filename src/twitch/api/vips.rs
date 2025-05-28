@@ -21,7 +21,7 @@ impl VipQuery {
 
 ///TODO doc
 pub async fn vip_twitch_user(client: &Client, query: VipQuery) -> Result<()> {
-    let url = format!("{TWITCH_API_BASE_URL}/vips");
+    let url = format!("{TWITCH_API_BASE_URL}/channels/vips");
 
     let vip_query = &[
         ("user_id", query.user_id),
@@ -40,7 +40,7 @@ pub async fn vip_twitch_user(client: &Client, query: VipQuery) -> Result<()> {
 
 ///TODO doc
 pub async fn unvip_twitch_user(client: &Client, query: VipQuery) -> Result<()> {
-    let url = format!("{TWITCH_API_BASE_URL}/vips");
+    let url = format!("{TWITCH_API_BASE_URL}/channels/vips");
 
     let unvip_query = &[
         ("user_id", query.user_id),
