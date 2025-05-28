@@ -107,7 +107,9 @@ pub async fn timeout_twitch_user(
     Ok(response_data)
 }
 
-/// TODO doc
+/// Removes the ban or timeout that was placed on the specified user
+///
+/// <https://dev.twitch.tv/docs/api/reference/#unban-user>
 pub async fn unban_twitch_user(client: &Client, query: UnbanQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/moderation/bans");
     let unban_query = &[

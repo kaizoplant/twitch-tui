@@ -71,7 +71,7 @@ impl UpdateChannelInformationPayload {
 
 /// Gets the game ID of the specified game name
 ///
-/// TODO
+/// <https://dev.twitch.tv/docs/api/reference/#get-games>
 pub async fn get_game_id(client: &Client, game_name: &str) -> Result<String> {
     let response_game_id = client
         .get(format!("{TWITCH_API_BASE_URL}/games?name={game_name}"))
@@ -89,6 +89,9 @@ pub async fn get_game_id(client: &Client, game_name: &str) -> Result<String> {
     Ok(response_game_id)
 }
 
+/// Gets information about a channel
+///
+/// <https://dev.twitch.tv/docs/api/reference/#get-channel-information>
 #[allow(unused)]
 pub async fn get_channel_information(
     client: &Client,
@@ -111,6 +114,9 @@ pub async fn get_channel_information(
     Ok(response_data)
 }
 
+/// Updates a channel's properties
+///
+/// <https://dev.twitch.tv/docs/api/reference/#modify-channel-information>
 pub async fn update_channel_information(
     client: &Client,
     broadcaster_id: String,

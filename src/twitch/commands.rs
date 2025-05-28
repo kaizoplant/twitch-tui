@@ -17,14 +17,21 @@ pub enum TwitchCommand {
     Raid(String),
     /// Cancel a raid
     Unraid,
-    /// TODO doc
+    /// Turn followers only mode on, with optional minimum follow duration in seconds
     Followers(Option<usize>),
+    /// Turn followers only mode off
     FollowersOff,
+    /// Turn slowmode on with duration in seconds
     Slow(usize),
+    /// Turn slowmode off
     SlowOff,
+    /// Turn subscribers only mode on
     Subscribers,
+    /// Turn subscribers only mode off
     SubscribersOff,
+    /// Turn emote only mode on
     EmoteOnly,
+    /// Turn emote only mode off
     EmoteOnlyOff,
     /// Vip username
     Vip(String),

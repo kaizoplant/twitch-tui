@@ -19,7 +19,9 @@ impl VipQuery {
     }
 }
 
-///TODO doc
+/// Adds the specified user as a VIP in the broadcaster's channel
+///
+/// <https://dev.twitch.tv/docs/api/reference/#add-channel-vip>
 pub async fn vip_twitch_user(client: &Client, query: VipQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/channels/vips");
 
@@ -38,7 +40,9 @@ pub async fn vip_twitch_user(client: &Client, query: VipQuery) -> Result<()> {
     Ok(())
 }
 
-///TODO doc
+/// Removes the specified user as a VIP in the broadcaster's channel
+///
+/// <https://dev.twitch.tv/docs/api/reference/#remove-channel-vip>
 pub async fn unvip_twitch_user(client: &Client, query: VipQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/channels/vips");
 

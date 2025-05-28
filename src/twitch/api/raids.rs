@@ -31,7 +31,9 @@ struct TwitchRaidResponseList {
     data: Vec<TwitchRaidResponse>,
 }
 
-///TODO doc
+/// Raid another channel by sending the broadcaster's viewers to the targeted channel
+///
+/// <https://dev.twitch.tv/docs/api/reference/#start-a-raid>
 pub async fn raid_twitch_user(client: &Client, query: RaidQuery) -> Result<TwitchRaidResponse> {
     let url = format!("{TWITCH_API_BASE_URL}/raids");
 
@@ -56,7 +58,9 @@ pub async fn raid_twitch_user(client: &Client, query: RaidQuery) -> Result<Twitc
     Ok(response_data)
 }
 
-///TODO doc
+/// Cancel a pending raid
+///
+/// <https://dev.twitch.tv/docs/api/reference/#cancel-a-raid>
 pub async fn unraid_twitch_user(client: &Client, broadcaster_id: String) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/raids");
 

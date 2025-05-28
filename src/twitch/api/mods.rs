@@ -19,7 +19,9 @@ impl ModQuery {
     }
 }
 
-///TODO doc
+/// Adds a moderator to the broadcaster's chat room
+///
+/// <https://dev.twitch.tv/docs/api/reference/#add-channel-moderator>
 pub async fn mod_twitch_user(client: &Client, query: ModQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/moderation/moderators");
 
@@ -38,7 +40,9 @@ pub async fn mod_twitch_user(client: &Client, query: ModQuery) -> Result<()> {
     Ok(())
 }
 
-///TODO doc
+/// Removes a moderator from the broadcaster's chat room
+///
+/// <https://dev.twitch.tv/docs/api/reference/#remove-channel-moderator>
 pub async fn unmod_twitch_user(client: &Client, query: ModQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/moderation/moderators");
 

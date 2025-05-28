@@ -131,6 +131,9 @@ impl UpdateTwitchChatSettingsPayload {
     }
 }
 
+/// Updates the broadcaster's chat settings
+///
+/// <https://dev.twitch.tv/docs/api/reference/#update-chat-settings>
 pub async fn update_chat_settings(
     client: &Client,
     query: UpdateTwitchChatSettingsQuery,
