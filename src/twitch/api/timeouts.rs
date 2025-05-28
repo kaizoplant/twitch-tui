@@ -22,7 +22,7 @@ impl TimeoutQuery {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TimeoutPayload {
-    data: TimeoutPayloadData
+    data: TimeoutPayloadData,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -35,11 +35,11 @@ struct TimeoutPayloadData {
 impl TimeoutPayload {
     pub const fn new(user_id: String, duration: Option<usize>, reason: Option<String>) -> Self {
         Self {
-            data: TimeoutPayloadData{
+            data: TimeoutPayloadData {
                 user_id,
                 duration,
                 reason,
-            }
+            },
         }
     }
 }
@@ -75,7 +75,6 @@ impl UnbanQuery {
     }
 }
 
-
 /// Bans a user from participating in the specified broadcaster’s chat room or puts them in a timeout.
 ///
 /// <https://dev.twitch.tv/docs/api/reference/#ban-user>
@@ -109,9 +108,7 @@ pub async fn timeout_twitch_user(
 }
 
 /// TODO doc
-pub async fn unban_twitch_user(client: &Client,
-    query: UnbanQuery,
-) -> Result<()> {
+pub async fn unban_twitch_user(client: &Client, query: UnbanQuery) -> Result<()> {
     let url = format!("{TWITCH_API_BASE_URL}/moderation/bans");
     let unban_query = &[
         ("broadcaster_id", query.broadcaster_id),
@@ -126,4 +123,3 @@ pub async fn unban_twitch_user(client: &Client,
         .error_for_status()?;
     Ok(())
 }
-

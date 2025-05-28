@@ -102,25 +102,25 @@ pub struct UpdateTwitchChatSettingsPayload {
     unique_chat_mode: Option<bool>,
 }
 
-impl UpdateTwitchChatSettingsPayload{
-    pub fn new_follower_mode(on: bool, duration: Option<usize>)-> Self{
+impl UpdateTwitchChatSettingsPayload {
+    pub fn new_follower_mode(on: bool, duration: Option<usize>) -> Self {
         let mut payload = Self::default();
         payload.follower_mode = Some(on);
         payload.follower_mode_duration = duration;
         return payload;
     }
-    pub fn new_slow_mode(on: bool, duration: Option<usize>) -> Self{
+    pub fn new_slow_mode(on: bool, duration: Option<usize>) -> Self {
         let mut payload = Self::default();
         payload.slow_mode = Some(on);
         payload.slow_mode_wait_time = duration;
         return payload;
     }
-    pub fn new_subscriber_mode(on: bool) -> Self{
+    pub fn new_subscriber_mode(on: bool) -> Self {
         let mut payload = Self::default();
         payload.subscriber_mode = Some(on);
         return payload;
     }
-    pub fn new_emote_only_mode(on: bool) -> Self{
+    pub fn new_emote_only_mode(on: bool) -> Self {
         let mut payload = Self::default();
         payload.emote_mode = Some(on);
         return payload;
