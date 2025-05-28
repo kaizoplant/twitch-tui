@@ -88,6 +88,57 @@ fn test_timeout_command_from_str_some_reason() -> Result<()> {
 }
 
 #[test]
+#[should_panic(expected = "No username in unban command")]
+fn test_unban_command_from_str_no_username(){
+    let raw_command = "unban";
+    TwitchCommand::from_str(raw_command).expect("No username in unban command");
+}
+
+#[test]
+fn test_unban_command_from_str() -> Result<()>{
+    let raw_command = "unban asdf";
+    let enum_command = TwitchCommand::from_str(raw_command)?;
+
+    assert_eq!(
+        enum_command,
+        TwitchCommand::Unban("asdf".to_string())
+    );
+
+    Ok(())
+}
+
+#[test]
+#[should_panic(expected = "No username in raid command")]
+fn test_raid_command_from_str_no_username(){
+    let raw_command = "raid";
+    TwitchCommand::from_str(raw_command).expect("No username in raid command");
+}
+
+#[test]
+fn test_raid_command_from_str() -> Result<()>{
+    let raw_command = "raid asdf";
+    let enum_command = TwitchCommand::from_str(raw_command)?;
+
+    assert_eq!(
+        enum_command,
+        TwitchCommand::Raid("asdf".to_string())
+    );
+
+    Ok(())
+}
+
+
+#[test]
+fn test_unraid_command_enum_from_str() -> Result<()> {
+    let raw_command = "unraid";
+    let enum_command = TwitchCommand::from_str(raw_command)?;
+
+    assert_eq!(enum_command, TwitchCommand::Unraid);
+
+    Ok(())
+}
+
+#[test]
 #[should_panic(expected = "Command is not supported")]
 fn test_unsupported_command() {
     let raw_command = "unsupported_command";
