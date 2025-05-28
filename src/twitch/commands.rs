@@ -17,6 +17,15 @@ pub enum TwitchCommand {
     Raid(String),
     /// Cancel a raid
     Unraid,
+    /// TODO doc
+    Followers(Option<usize>),
+    FollowersOff,
+    Slow(usize),
+    SlowOff,
+    Subscribers,
+    SubscribersOff,
+    EmoteOnly,
+    EmoteOnlyOff,
 }
 
 impl TwitchCommand {
@@ -60,10 +69,31 @@ impl TwitchCommand {
         }
     }
 
-    fn handle_raid_command(args: &[&str]) -> Result<Self, Error>{
+    fn handle_raid_command(args: &[&str]) -> Result<Self, Error> {
         match args.iter().as_slice() {
             [username] => Ok(Self::Raid((*username).to_string())),
             _ => bail!("Invalid raid command arguments"),
+        }
+    }
+    fn handle_followers_command(args: &[&str]) -> Result<Self, Error> {
+        match args.iter().as_slice() {
+            [followed_duration] => {
+                let duration = followed_duration.parse::<usize>()?;
+
+                Ok(Self::Followers(Some(duration)))
+            }
+            [] => Ok(Self::Followers(None)),
+            _ => bail!("Invalid followers command arguments"),
+        }
+    }
+    fn handle_slow_commnad(args: &[&str]) -> Result<Self, Error> {
+        match args.iter().as_slice() {
+            [slow_duration] => {
+                let duration = slow_duration.parse::<usize>()?;
+
+                Ok(Self::Slow(duration))
+            }
+            _ => bail!("Invalid slow command arguments"),
         }
     }
 }
@@ -77,10 +107,18 @@ impl FromStr for TwitchCommand {
         let cmd = match parts.split_whitespace().collect::<Vec<&str>>().as_slice() {
             ["clear"] => Self::Clear,
             ["ban", args @ ..] => Self::handle_ban_command(args)?,
-            ["unban", args @..] => Self::handle_unban_command(args)?,
+            ["unban", args @ ..] => Self::handle_unban_command(args)?,
             ["timeout", args @ ..] => Self::handle_timeout_command(args)?,
-            ["raid", args @..] => Self::handle_raid_command(args)?,
+            ["raid", args @ ..] => Self::handle_raid_command(args)?,
             ["unraid"] => Self::Unraid,
+            ["followers", args @ ..] => Self::handle_followers_command(args)?,
+            ["followersoff"] => Self::FollowersOff,
+            ["slow", args @ ..] => Self::handle_slow_commnad(args)?,
+            ["slowoff"] => Self::SlowOff,
+            ["subscribers"] => Self::Subscribers,
+            ["subscribersoff"] => Self::SubscribersOff,
+            ["emoteonly"] => Self::EmoteOnly,
+            ["emoteonlyoff"] => Self::EmoteOnlyOff,
             _ => bail!("Twitch command {} is not supported", s),
         };
 

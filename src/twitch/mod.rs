@@ -14,10 +14,13 @@ mod tests;
 use std::{collections::HashMap, str::FromStr};
 
 use api::{
-    chat_settings::get_chat_settings,
+    chat_settings::{
+        UpdateTwitchChatSettingsPayload, UpdateTwitchChatSettingsQuery, get_chat_settings,
+        update_chat_settings,
+    },
     clear::{DeleteMessageQuery, delete_twitch_messages},
     event_sub::{INITIAL_EVENT_SUBSCRIPTIONS, unsubscribe_from_events},
-    raids::{RaidQuery, UnraidQuery, raid_twitch_user, unraid_twitch_user},
+    raids::{RaidQuery, raid_twitch_user, unraid_twitch_user},
     subscriptions::Subscription,
     timeouts::{TimeoutPayload, TimeoutQuery, UnbanQuery, timeout_twitch_user, unban_twitch_user},
 };
@@ -252,9 +255,56 @@ async fn handle_command_message(
             raid_twitch_user(twitch_client, raid_query).await?;
         }
         TwitchCommand::Unraid => {
-            let unraid_query = UnraidQuery::new(channel_id.to_string());
+            unraid_twitch_user(twitch_client, channel_id.to_string()).await?;
+        }
+        TwitchCommand::Followers(duration) => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_follower_mode(true, duration);
 
-            unraid_twitch_user(twitch_client, unraid_query).await?;
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::FollowersOff => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_follower_mode(false, None);
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::Slow(duration) => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload =
+                UpdateTwitchChatSettingsPayload::new_slow_mode(true, Some(duration));
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::SlowOff => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_slow_mode(false, None);
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::Subscribers => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_subscriber_mode(true);
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::SubscribersOff => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_subscriber_mode(false);
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::EmoteOnly => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_emote_only_mode(true);
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
+        }
+        TwitchCommand::EmoteOnlyOff => {
+            let update_query = UpdateTwitchChatSettingsQuery::new(channel_id.to_string(), user_id);
+            let update_payload = UpdateTwitchChatSettingsPayload::new_emote_only_mode(false);
+
+            update_chat_settings(twitch_client, update_query, update_payload).await?;
         }
     }
 

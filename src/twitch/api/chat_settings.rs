@@ -75,3 +75,81 @@ pub async fn get_chat_settings(
 
     Ok(response_data)
 }
+
+pub struct UpdateTwitchChatSettingsQuery {
+    broadcaster_id: String,
+    moderator_id: String,
+}
+impl UpdateTwitchChatSettingsQuery {
+    pub const fn new(broadcaster_id: String, moderator_id: String) -> Self {
+        Self {
+            broadcaster_id,
+            moderator_id,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
+pub struct UpdateTwitchChatSettingsPayload {
+    emote_mode: Option<bool>,
+    follower_mode: Option<bool>,
+    follower_mode_duration: Option<usize>,
+    non_moderator_chat_delay: Option<bool>,
+    non_moderator_chat_delay_duration: Option<usize>,
+    slow_mode: Option<bool>,
+    slow_mode_wait_time: Option<usize>,
+    subscriber_mode: Option<bool>,
+    unique_chat_mode: Option<bool>,
+}
+
+impl UpdateTwitchChatSettingsPayload{
+    pub fn new_follower_mode(on: bool, duration: Option<usize>)-> Self{
+        let mut payload = Self::default();
+        payload.follower_mode = Some(on);
+        payload.follower_mode_duration = duration;
+        return payload;
+    }
+    pub fn new_slow_mode(on: bool, duration: Option<usize>) -> Self{
+        let mut payload = Self::default();
+        payload.slow_mode = Some(on);
+        payload.slow_mode_wait_time = duration;
+        return payload;
+    }
+    pub fn new_subscriber_mode(on: bool) -> Self{
+        let mut payload = Self::default();
+        payload.subscriber_mode = Some(on);
+        return payload;
+    }
+    pub fn new_emote_only_mode(on: bool) -> Self{
+        let mut payload = Self::default();
+        payload.emote_mode = Some(on);
+        return payload;
+    }
+}
+
+pub async fn update_chat_settings(
+    client: &Client,
+    query: UpdateTwitchChatSettingsQuery,
+    payload: UpdateTwitchChatSettingsPayload,
+) -> Result<TwitchChatSettingsResponse> {
+    let settings_query = &[
+        ("broadcaster_id", query.broadcaster_id),
+        ("moderator_id", query.moderator_id),
+    ];
+    let url = format!("{TWITCH_API_BASE_URL}/chat/settings");
+
+    let response_data = client
+        .patch(url)
+        .query(settings_query)
+        .json(&payload)
+        .send()
+        .await?
+        .error_for_status()?
+        .json::<TwitchChatSettingsResponseList>()
+        .await?
+        .data
+        .first()
+        .context("Failed to get chat settings response")?
+        .clone();
+    Ok(response_data)
+}
