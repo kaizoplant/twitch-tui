@@ -26,8 +26,17 @@ pub enum TwitchCommand {
     SubscribersOff,
     EmoteOnly,
     EmoteOnlyOff,
-
+    /// Vip username
+    Vip(String),
+    /// Unvip username
+    Unvip(String),
+    /// Mod username
+    Mod(String),
+    /// Unmod username
+    Unmod(String),
+    /// Set the title of the stream
     Title(String),
+    /// Set the category of a stream
     Category(String),
 }
 
@@ -107,6 +116,30 @@ impl TwitchCommand {
         let game_name = args.join(" ");
         Self::Category(game_name)
     }
+    fn handle_mod_command(args: &[&str]) -> Result<Self, Error> {
+        match args.iter().as_slice() {
+            [username] => Ok(Self::Mod((*username).to_string())),
+            _ => bail!("Invalid mod command arguments"),
+        }
+    }
+    fn handle_unmod_command(args: &[&str]) -> Result<Self, Error> {
+        match args.iter().as_slice() {
+            [username] => Ok(Self::Unmod((*username).to_string())),
+            _ => bail!("Invalid unmod command arguments"),
+        }
+    }
+    fn handle_vip_command(args: &[&str]) -> Result<Self, Error> {
+        match args.iter().as_slice() {
+            [username] => Ok(Self::Vip((*username).to_string())),
+            _ => bail!("Invalid vip command arguments"),
+        }
+    }
+    fn handle_unvip_command(args: &[&str]) -> Result<Self, Error> {
+        match args.iter().as_slice() {
+            [username] => Ok(Self::Unvip((*username).to_string())),
+            _ => bail!("Invalid unvip command arguments"),
+        }
+    }
 }
 
 impl FromStr for TwitchCommand {
@@ -130,6 +163,10 @@ impl FromStr for TwitchCommand {
             ["subscribersoff"] => Self::SubscribersOff,
             ["emoteonly"] => Self::EmoteOnly,
             ["emoteonlyoff"] => Self::EmoteOnlyOff,
+            ["mod", args @ ..] => Self::handle_mod_command(args)?,
+            ["unmod", args @ ..] => Self::handle_unmod_command(args)?,
+            ["vip", args @ ..] => Self::handle_vip_command(args)?,
+            ["unvip", args @ ..] => Self::handle_unvip_command(args)?,
             ["title", args @ ..] => Self::handle_title_command(args),
             ["category", args @ ..] => Self::handle_category_command(args),
             _ => bail!("Twitch command {} is not supported", s),

@@ -23,9 +23,11 @@ use api::{
     },
     clear::{DeleteMessageQuery, delete_twitch_messages},
     event_sub::{INITIAL_EVENT_SUBSCRIPTIONS, unsubscribe_from_events},
+    mods::{ModQuery, mod_twitch_user, unmod_twitch_user},
     raids::{RaidQuery, raid_twitch_user, unraid_twitch_user},
     subscriptions::Subscription,
     timeouts::{TimeoutPayload, TimeoutQuery, UnbanQuery, timeout_twitch_user, unban_twitch_user},
+    vips::{VipQuery, unvip_twitch_user, vip_twitch_user},
 };
 use badges::retrieve_user_badges;
 use color_eyre::{
@@ -309,6 +311,35 @@ async fn handle_command_message(
 
             update_chat_settings(twitch_client, update_query, update_payload).await?;
         }
+        TwitchCommand::Vip(username) => {
+            let target_user_id = get_channel_id(twitch_client, &username).await?;
+
+            let vip_query = VipQuery::new(channel_id.to_string(), target_user_id);
+
+            vip_twitch_user(twitch_client, vip_query).await?;
+        }
+        TwitchCommand::Unvip(username) => {
+            let target_user_id = get_channel_id(twitch_client, &username).await?;
+
+            let unvip_query = VipQuery::new(channel_id.to_string(), target_user_id);
+
+            unvip_twitch_user(twitch_client, unvip_query).await?;
+        }
+        TwitchCommand::Mod(username) => {
+            let target_user_id = get_channel_id(twitch_client, &username).await?;
+
+            let mod_query = ModQuery::new(channel_id.to_string(), target_user_id);
+
+            mod_twitch_user(twitch_client, mod_query).await?;
+        }
+        TwitchCommand::Unmod(username) => {
+            let target_user_id = get_channel_id(twitch_client, &username).await?;
+
+            let unmod_query = ModQuery::new(channel_id.to_string(), target_user_id);
+
+            unmod_twitch_user(twitch_client, unmod_query).await?;
+        }
+
         TwitchCommand::Title(title) => {
             let update_payload = UpdateChannelInformationPayload::new_title(title);
 

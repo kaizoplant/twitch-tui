@@ -89,7 +89,8 @@ pub async fn get_game_id(client: &Client, game_name: &str) -> Result<String> {
     Ok(response_game_id)
 }
 
-pub async fn _get_channel_information(
+#[allow(unused)]
+pub async fn get_channel_information(
     client: &Client,
     broadcaster_id: String,
 ) -> Result<ChannelInformationResponse> {
