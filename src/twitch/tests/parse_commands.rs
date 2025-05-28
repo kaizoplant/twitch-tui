@@ -131,6 +131,8 @@ fn test_unraid_command_enum_from_str() -> Result<()> {
     Ok(())
 }
 
+//TODO more commands to test
+
 #[test]
 #[should_panic(expected = "Command is not supported")]
 fn test_unsupported_command() {
