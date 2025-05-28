@@ -58,6 +58,24 @@ struct TwitchTimeoutResponseList {
     data: Vec<TwitchTimeoutResponse>,
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct UnbanQuery {
+    broadcaster_id: String,
+    moderator_id: String,
+    user_id: String,
+}
+
+impl UnbanQuery {
+    pub const fn new(broadcaster_id: String, moderator_id: String, user_id: String) -> Self {
+        Self {
+            broadcaster_id,
+            moderator_id,
+            user_id,
+        }
+    }
+}
+
+
 /// Bans a user from participating in the specified broadcaster’s chat room or puts them in a timeout.
 ///
 /// <https://dev.twitch.tv/docs/api/reference/#ban-user>
@@ -89,3 +107,23 @@ pub async fn timeout_twitch_user(
 
     Ok(response_data)
 }
+
+/// TODO doc
+pub async fn unban_twitch_user(client: &Client,
+    query: UnbanQuery,
+) -> Result<()> {
+    let url = format!("{TWITCH_API_BASE_URL}/moderation/bans");
+    let unban_query = &[
+        ("broadcaster_id", query.broadcaster_id),
+        ("moderator_id", query.moderator_id),
+        ("user_id", query.user_id),
+    ];
+    client
+        .delete(&url)
+        .query(unban_query)
+        .send()
+        .await?
+        .error_for_status()?;
+    Ok(())
+}
+

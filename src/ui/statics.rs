@@ -60,8 +60,12 @@ pub static HELP_KEYBINDS: LazyLock<Vec<(&str, KeybindPair)>> = LazyLock::new(|| 
 // https://help.twitch.tv/s/article/chat-commands?language=en_US
 pub static SUPPORTED_COMMANDS: LazyLock<Vec<&str>> = LazyLock::new(|| {
     vec![
-        "ban", "unban",
         "clear",
+        "ban",
+        "unban",
+        "timeout",
+        "raid",
+        "unraid",
         // "color",
         // "commercial",
         // "delete",
@@ -80,13 +84,11 @@ pub static SUPPORTED_COMMANDS: LazyLock<Vec<&str>> = LazyLock::new(|| {
         // "mods",
         // "r9kbeta",
         // "r9kbetaoff",
-        // "raid",
         // "unraid",
         // "slow",
         // "slowoff",
         // "subscribers",
         // "subscribersoff",
-        // "timeout",
         // "untimeout",
         // "vip",
         // "unvip",

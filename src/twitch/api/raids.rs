@@ -31,8 +31,19 @@ pub struct TwitchRaidResponseList {
     data: Vec<TwitchRaidResponse>
 }
 
+pub struct UnraidQuery{
+    broadcaster_id: String,
+}
+impl UnraidQuery {
+    pub const fn new(broadcaster_id: String) -> Self {
+        Self {
+            broadcaster_id,
+        }
+    }
+}
 
-///TODO put doc
+
+///TODO doc
 pub async fn raid_twitch_user(client: &Client, query: RaidQuery)->Result<TwitchRaidResponse>{
     let url = format!("{TWITCH_API_BASE_URL}/raids");
 
@@ -55,4 +66,21 @@ pub async fn raid_twitch_user(client: &Client, query: RaidQuery)->Result<TwitchR
         .clone();
 
     Ok(response_data)
+}
+
+///TODO doc
+pub async fn unraid_twitch_user(client: &Client, query: UnraidQuery)->Result<()>{
+    let url = format!("{TWITCH_API_BASE_URL}/raids");
+
+    let unraid_query = &[
+        ("broadcaster_id", query.broadcaster_id),
+    ];
+
+    client
+        .delete(url)
+        .query(unraid_query)
+        .send()
+        .await?
+        .error_for_status()?;
+    Ok(())
 }

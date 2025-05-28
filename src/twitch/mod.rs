@@ -17,9 +17,9 @@ use api::{
     chat_settings::get_chat_settings,
     clear::{DeleteMessageQuery, delete_twitch_messages},
     event_sub::{INITIAL_EVENT_SUBSCRIPTIONS, unsubscribe_from_events},
+    raids::{RaidQuery, UnraidQuery, raid_twitch_user, unraid_twitch_user},
     subscriptions::Subscription,
-    timeouts::{TimeoutPayload, TimeoutQuery, timeout_twitch_user},
-    raids::{RaidQuery, raid_twitch_user},
+    timeouts::{TimeoutPayload, TimeoutQuery, UnbanQuery, timeout_twitch_user, unban_twitch_user},
 };
 use badges::retrieve_user_badges;
 use color_eyre::{
@@ -237,10 +237,24 @@ async fn handle_command_message(
 
             timeout_twitch_user(twitch_client, timeout_query, timeout_payload).await?;
         }
+        TwitchCommand::Unban(username) => {
+            let target_user_id = get_channel_id(twitch_client, &username).await?;
+
+            let unban_query = UnbanQuery::new(channel_id.to_string(), user_id, target_user_id);
+
+            unban_twitch_user(twitch_client, unban_query).await?;
+        }
         TwitchCommand::Raid(username) => {
             let target_user_id = get_channel_id(twitch_client, &username).await?;
+
             let raid_query = RaidQuery::new(channel_id.to_string(), target_user_id);
+
             raid_twitch_user(twitch_client, raid_query).await?;
+        }
+        TwitchCommand::Unraid => {
+            let unraid_query = UnraidQuery::new(channel_id.to_string());
+
+            unraid_twitch_user(twitch_client, unraid_query).await?;
         }
     }
 
