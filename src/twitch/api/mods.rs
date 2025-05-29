@@ -6,8 +6,8 @@ use super::TWITCH_API_BASE_URL;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ModQuery {
-    user_id: String,
     broadcaster_id: String,
+    user_id: String,
 }
 
 impl ModQuery {

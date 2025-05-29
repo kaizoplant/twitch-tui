@@ -140,11 +140,15 @@ pub async fn twitch_websocket(
                     TwitchAction::Message(message) => {
                         if let Some(command) = message.strip_prefix('/') {
                             if let Err(err) = handle_command_message(&context, &tx, command).await {
-                                error!("Failed to handle Twitch message command from terminal: {err}");
+                                let error_message = format!("Failed to handle Twitch message command from terminal: {err}");
+                                _ = tx.send(DataBuilder::system(error_message.to_string())).await;
+                                error!(error_message);
                             }
                         }
                         else if let Err(err) = handle_send_message(&context, message).await {
-                            error!("Failed to send Twitch message from terminal: {err}");
+                            let error_message = format!("Failed to send Twitch message from terminal: {err}");
+                            _ = tx.send(DataBuilder::system(error_message.to_string())).await;
+                            error!(error_message);
                         }
                     },
                     TwitchAction::JoinChannel(channel_name) => {
