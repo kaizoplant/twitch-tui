@@ -23,15 +23,17 @@ pub struct ReceivedTwitchMessageSession {
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct ReceivedTwitchSubscriptionCondition {
     broadcaster_user_id: String,
-    user_id: String,
+    user_id: Option<String>,
+    reward_id: Option<String>,
 }
 
 impl ReceivedTwitchSubscriptionCondition {
     #[must_use]
-    pub const fn new(broadcaster_user_id: String, user_id: String) -> Self {
+    pub const fn new(broadcaster_user_id: String, user_id: Option<String>) -> Self {
         Self {
             broadcaster_user_id,
             user_id,
+            reward_id: None,
         }
     }
 
@@ -123,6 +125,23 @@ impl ReceivedTwitchEventReply {
     }
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct ReceivedTwitchEventReward {
+    id: String,
+    title: String,
+    cost: usize,
+    prompt: String,
+}
+
+impl ReceivedTwitchEventReward {
+    pub fn title(&self) -> String {
+        self.title.clone()
+    }
+    pub const fn cost(&self) -> usize {
+        self.cost
+    }
+}
+
 /// All attributes that are to come through during a channel chat notification event
 ///
 /// <https://dev.twitch.tv/docs/eventsub/eventsub-reference/#channel-chat-notification-event>
@@ -161,6 +180,7 @@ pub struct ReceivedTwitchEvent {
     banned_at: Option<DateTime<Utc>>,
     ends_at: Option<DateTime<Utc>>,
     is_permanent: Option<bool>,
+    reward: Option<ReceivedTwitchEventReward>,
 }
 
 impl ReceivedTwitchEventMessageFragmentEmote {
@@ -257,6 +277,10 @@ impl ReceivedTwitchEvent {
     pub const fn user_name(&self) -> Option<&String> {
         self.user_name.as_ref()
     }
+
+    pub const fn reward(&self) -> Option<&ReceivedTwitchEventReward> {
+        self.reward.as_ref()
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -318,7 +342,7 @@ impl ReceivedTwitchSubscription {
         Self {
             subscription_type: maybe_subscription_type,
             version: "1".to_string(),
-            condition: ReceivedTwitchSubscriptionCondition::new(channel_id, user_id),
+            condition: ReceivedTwitchSubscriptionCondition::new(channel_id, Some(user_id)),
             transport: ReceivedTwitchSubscriptionTransport::new(session_id),
             ..Default::default()
         }

@@ -27,6 +27,12 @@ pub static INITIAL_EVENT_SUBSCRIPTIONS: LazyLock<Vec<Subscription>> = LazyLock::
     ]
 });
 
+pub static INITIAL_EVENT_SUBSCRIPTIONS_MOD: LazyLock<Vec<Subscription>> =
+    LazyLock::new(|| vec![Subscription::Ban]);
+
+pub static INITIAL_EVENT_SUBSCRIPTIONS_BROADCASTER: LazyLock<Vec<Subscription>> =
+    LazyLock::new(|| vec![Subscription::CustomRewardRedemptionAdd]);
+
 /// Subscribe to a set of events, returning a hashmap of subscription types corresponding to their ID
 ///
 /// <https://dev.twitch.tv/docs/api/reference/#create-eventsub-subscription>

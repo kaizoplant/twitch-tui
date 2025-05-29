@@ -22,7 +22,10 @@ use api::{
         update_chat_settings,
     },
     clear::{DeleteMessageQuery, delete_twitch_messages},
-    event_sub::{INITIAL_EVENT_SUBSCRIPTIONS, unsubscribe_from_events},
+    event_sub::{
+        INITIAL_EVENT_SUBSCRIPTIONS, INITIAL_EVENT_SUBSCRIPTIONS_BROADCASTER,
+        INITIAL_EVENT_SUBSCRIPTIONS_MOD, unsubscribe_from_events,
+    },
     mods::{ModQuery, mod_twitch_user, unmod_twitch_user},
     raids::{RaidQuery, raid_twitch_user, unraid_twitch_user},
     subscriptions::Subscription,
@@ -423,12 +426,23 @@ async fn handle_channel_join(
         &get_channel_id(twitch_client, &channel_name).await?
     };
 
+    let new_subscription_types = if twitch_oauth.user_id == *channel_id {
+        [
+            INITIAL_EVENT_SUBSCRIPTIONS.as_slice(),
+            INITIAL_EVENT_SUBSCRIPTIONS_MOD.as_slice(),
+            INITIAL_EVENT_SUBSCRIPTIONS_BROADCASTER.as_slice(),
+        ]
+        .concat()
+    } else {
+        INITIAL_EVENT_SUBSCRIPTIONS.to_vec()
+    };
+
     let new_subscriptions = subscribe_to_events(
         twitch_client,
         twitch_oauth,
         context.session_id().cloned(),
         channel_id.to_string(),
-        current_subscriptions,
+        new_subscription_types,
     )
     .await
     .context(format!(
@@ -534,6 +548,18 @@ async fn handle_chat_notification(
                     message_id.to_string(),
                 ))
                 .await?;
+            }
+        }
+        Subscription::CustomRewardRedemptionAdd => {
+            let redeemed_user = event
+                .user_name()
+                .map_or("Unknown Twitch user", |user| user.as_str());
+            if let Some(reward) = event.reward() {
+                let reward_title = reward.title();
+                let reward_cost = reward.cost();
+                let reward_message =
+                    format!("{redeemed_user} redeemed {reward_title}: {reward_cost}");
+                tx.send(DataBuilder::twitch(reward_message)).await?;
             }
         }
         Subscription::Ban => {

@@ -38,6 +38,12 @@ pub enum Subscription {
     #[serde(rename = "channel.chat.message_delete")]
     MessageDelete,
 
+    /// A viewer has redeemed a custom channel points reward
+    ///
+    /// <https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_reward_redemptionadd>
+    #[serde(rename = "channel.channel_points_custom_reward_redemption.add")]
+    CustomRewardRedemptionAdd,
+
     /// A viewer is timed out or banned from the channel.
     ///
     /// <https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelban>
@@ -56,6 +62,9 @@ impl fmt::Display for Subscription {
             Self::Clear => "channel.chat.clear",
             Self::ClearUserMessages => "channel.chat.clear_user_messages",
             Self::MessageDelete => "channel.chat.message_delete",
+            Self::CustomRewardRedemptionAdd => {
+                "channel.channel_points_custom_reward_redemption.add"
+            }
             Self::Ban => "channel.ban",
             Self::Unknown => "unknown",
         }
