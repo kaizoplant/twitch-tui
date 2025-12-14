@@ -45,17 +45,29 @@ impl ChatInputWidget {
                 .next()
                 .and_then(|start_character| match start_character {
                     '/' => {
-                        let possible_suggestion = first_similarity(
-                            &SUPPORTED_COMMANDS
-                                .iter()
-                                .map(ToString::to_string)
-                                .collect::<Vec<String>>(),
-                            &s[1..],
-                        );
+                        let possible_suggestion =
+                            match s[1..].split_whitespace().collect::<Vec<&str>>().as_slice() {
+                                [partial_command] => first_similarity(
+                                    &SUPPORTED_COMMANDS
+                                        .iter()
+                                        .map(ToString::to_string)
+                                        .collect::<Vec<String>>(),
+                                    partial_command,
+                                ),
+                                [command, partial_username] => match *command {
+                                    //TODO so like ehhhh
+                                    "vip" | "unvip" | "mod" | "unmod" | "ban" | "timeout"
+                                    | "unban" | "raid" | "shoutout" => first_similarity(
+                                        &storage.borrow().get("chatters"),
+                                        partial_username,
+                                    )
+                                    .map(|s| format!("{command} {s}")),
+                                    _ => None,
+                                },
+                                _ => None,
+                            };
 
-                        let default_suggestion = possible_suggestion.clone();
-
-                        possible_suggestion.map_or(default_suggestion, |s| Some(format!("/{s}")))
+                        possible_suggestion.map(|s| format!("/{s}"))
                     }
                     '@' => {
                         let possible_suggestion =
@@ -63,9 +75,7 @@ impl ChatInputWidget {
                                 || first_similarity(&storage.borrow().get("chatters"), &s[1..]),
                             );
 
-                        let default_suggestion = possible_suggestion.clone();
-
-                        possible_suggestion.map_or(default_suggestion, |s| Some(format!("@{s}")))
+                        possible_suggestion.map(|s| format!("@{s}"))
                     }
                     _ => None,
                 })
