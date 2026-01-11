@@ -13,4 +13,81 @@ pub mod subscriptions;
 pub mod timeouts;
 pub mod vips;
 
+use color_eyre::{Result, eyre::ContextCompat};
+use reqwest::{Client, Method};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
+
 pub static TWITCH_API_BASE_URL: &str = "https://api.twitch.tv/helix";
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct BroadcasterQuery {
+    broadcaster_id: String,
+    user_id: String,
+}
+
+impl BroadcasterQuery {
+    pub const fn new(broadcaster_id: String, user_id: String) -> Self {
+        Self {
+            broadcaster_id,
+            user_id,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct ModeratorQuery {
+    broadcaster_id: String,
+    moderator_id: String,
+}
+
+impl ModeratorQuery {
+    pub const fn new(broadcaster_id: String, moderator_id: String) -> Self {
+        Self {
+            broadcaster_id,
+            moderator_id,
+        }
+    }
+}
+
+pub async fn request_bodiless<T: Serialize>(
+    client: &Client,
+    method: Method,
+    url: String,
+    query: T,
+) -> Result<()> {
+    client
+        .request(method, url)
+        .query(&query)
+        .send()
+        .await?
+        .error_for_status()?;
+    Ok(())
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct ResponseList<T> {
+    data: Vec<T>,
+}
+
+pub async fn request_list<T: Serialize, U: Serialize, V: Clone + DeserializeOwned>(
+    client: &Client,
+    method: Method,
+    url: String,
+    query: T,
+    payload: U,
+) -> Result<V> {
+    let response_data = client
+        .request(method, url)
+        .query(&query)
+        .json(&payload)
+        .send()
+        .await?
+        .error_for_status()?
+        .json::<ResponseList<V>>()
+        .await?
+        .data
+        .first()
+        .context("Failed to get response data")?
+        .clone();
+    Ok(response_data)
+}
