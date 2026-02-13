@@ -238,7 +238,7 @@ impl Component for DashboardWidget {
                 return self.following.event(event).await;
             }
 
-            let keybinds = self.config.keybinds.dashboard.clone();
+            let keybinds = &self.config.keybinds.dashboard;
             match key {
                 key if keybinds.quit.contains(key) => {
                     self.event_tx
